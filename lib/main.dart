@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:tcg_collection_app/providers/quantity_provider.dart';
@@ -5,9 +6,16 @@ import 'package:tcg_collection_app/providers/theme_provider.dart';
 import 'package:tcg_collection_app/screens/screens.dart';
 import 'providers/portfolio_provider.dart';
 
-void main() {
-  runApp(MyApp());
+void main() async{
+   WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]).then((_) {
+    runApp(MyApp());
+  });
 }
+
 
 class MyApp extends StatelessWidget {
    MyApp({super.key});
@@ -56,28 +64,7 @@ class MyApp extends StatelessWidget {
                 themeMode: themeProvider.themeMode, 
                 initialRoute: Routes.bottomNavigationBarScreen,
                 onGenerateRoute: RouteGenerator.generateRoute,
-                builder: (context, child) {
-                  return Scaffold(
-                    body: Stack(
-                      children: [
-                        child!,
-                        Positioned(
-                          top: 16.h,
-                          right: 16.w,
-                          child: IconButton(
-                            icon: Icon(
-                              themeProvider.themeMode == ThemeMode.light ? Icons.dark_mode : Icons.light_mode,
-                              color: Colors.blue,
-                            ),
-                            onPressed: () {
-                              themeProvider.toggleTheme(); 
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
+               
               );
             },
           ),

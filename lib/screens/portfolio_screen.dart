@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:tcg_collection_app/screens/bottom_navigation_bar_screen.dart';
+import 'package:tcg_collection_app/providers/theme_provider.dart';
 import 'package:tcg_collection_app/utils/extensions/extensions.dart';
 import '../providers/portfolio_provider.dart';
 
@@ -26,47 +26,36 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context); 
     return Scaffold(
        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+       
       appBar: AppBar(
         surfaceTintColor: Colors.transparent,
         // backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
         centerTitle: true,
         title: const Text('My Portfolio'),
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: CircleAvatar(
-            backgroundColor: Colors.white,
-            child: GestureDetector(
-              onTap: () {
-               Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => const BottomNavigationBarScreen()),
-              (Route<dynamic> route) => false, 
-            );
-            
-              },
-              child: Container(
-                width: 39.w,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    width: 1.0,
-                    color: const Color(0xffD8DADC),
-                  ),
-                ),
-                child: Center(
-                  child: Icon(
-                    Icons.arrow_back_sharp,
-                    color: Colors.black,
-                    size: 20.sp,
-                  ),
-                ),
-              ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: CircleAvatar(
+            backgroundColor: const Color(0xff53B175) ,
+            child: Center(
+              child: IconButton(
+                        icon: Icon(
+                          themeProvider.themeMode == ThemeMode.light ? Icons.dark_mode : Icons.light_mode,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {
+                          themeProvider.toggleTheme(); 
+                        },
+                      ),
             ),
+                    ),
           ),
-        ),
+ 
+        ],
       ),
       body: Padding(
         padding: EdgeInsets.all(12.w),
