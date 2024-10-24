@@ -20,112 +20,111 @@ class CategoryWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-       onTap: () {
-      final provider = Provider.of<CategoryProvider>(context, listen: false);
-      final quantity = provider.getQuantity(categoryModel.id);
+      onTap: () {
+        final provider = Provider.of<CategoryProvider>(context, listen: false);
+        final quantity = provider.getQuantity(categoryModel.id);
 
-      showModalBottomSheet(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        elevation: 0.0,
-        context: context,
-        isScrollControlled: true,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-            top: Radius.circular(20),
-          ),
-        ),
-        builder: (context) {
-          return ChangeNotifierProvider.value(
-            value: provider,
-            child: Consumer<ThemeProvider>(
-              builder: (context, themeProvider, child) {
-                final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
-
-                return _buildBottomSheetContent(context, isDarkMode);
-              },
+        showModalBottomSheet(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          elevation: 0.0,
+          context: context,
+          isScrollControlled: true,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(20),
             ),
-          );
-        },
-      );
-    },
+          ),
+          builder: (context) {
+            return ChangeNotifierProvider.value(
+              value: provider,
+              child: Consumer<ThemeProvider>(
+                builder: (context, themeProvider, child) {
+                  final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
+                  return _buildBottomSheetContent(context, isDarkMode);
+                },
+              ),
+            );
+          },
+        );
+      },
       child: Container(
+        margin: EdgeInsets.only(right: 12.w),
+        width: 160.w,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(width: 2, color: Colors.white),
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(
+            color: const Color(0xffD8DADC),
+          ),
         ),
         child: Column(
           children: [
-            Expanded(
+            Padding(
+              padding: const EdgeInsets.all(8.0),
               child: Container(
-                width: 150.w,
                 decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: NetworkImage(categoryModel.image),
-                    fit: BoxFit.scaleDown,
-                    onError: (error, stackTrace) {
-                      debugPrint("Failed to load image: $error");
-                    },
+                  borderRadius: BorderRadius.circular(18),
+                  border: Border.all(
+                    color: const Color(0xffD8DADC),
                   ),
+                ),
+                child: Image.network(
+                  categoryModel.image,
+                  height: 110.h,
+                  width: double.infinity,
+                  fit: BoxFit.fill,
                 ),
               ),
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: 1.h,),
-                Text(
-                  categoryModel.catName,
-                  style: GoogleFonts.montserrat(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xff181725),
+            
+            Expanded( 
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 1.h),
+                  Flexible(
+  child: Text(
+    categoryModel.catName,
+    style: GoogleFonts.montserrat(
+      fontSize: 13.sp,
+      fontWeight: FontWeight.w600,
+      color: const Color(0xff181725),
+    ),
+    overflow: TextOverflow.ellipsis,
+    maxLines: 1, 
+  ),
+),
+   SizedBox(height: 4.h),
+                  Flexible(
+                    child: Consumer<CategoryProvider>(
+                      builder: (context, provider, child) {
+                        final quantity = provider.getQuantity(categoryModel.id);
+                    
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text('\$4.99'),
+                            if (quantity > 0)
+                              CircleAvatar(
+                                radius: 15.sp,
+                                backgroundColor: const Color(0xff53B175),
+                                child: Center(
+                                  child: const Icon(Icons.check, color: Colors.white),
+                                ),
+                              ),
+                            CircleAvatar(
+                              radius: 15.sp,
+                              backgroundColor: const Color(0xff53B175),
+                              child: const Icon(Icons.add, color: Colors.white),
+                            ),
+                          ],
+                        ).padOnly(bottom: 2.h);
+                      },
+                    ),
                   ),
-                ),
-                // Text(
-                //   categoryModel.catDescription,
-                //   style: const TextStyle(
-                //     fontSize: 14,
-                //     color: Color(0xff7C7C7C),
-                //   ),
-                // ),
-                SizedBox(height: 12.h),
-                Consumer<CategoryProvider>(
-                  builder: (context, provider, child) {
-                    final quantity = provider.getQuantity(categoryModel.id); 
-
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text('\$4.99'),
-                     //   Text(quantity.toString()),
-                       if (quantity > 0)
-                        CircleAvatar(
-                          backgroundColor: const Color(0xff53B175) ,
-                          child: Center(
-                            child: quantity > 0
-                                    ? const Icon(Icons.check, color: Colors.white) 
-                                    : Container(),
-                                                   
-                          ),
-                        ),
-                         Container(
-                          padding: EdgeInsets.only(top: 8.h, bottom: 8.h),
-                          width: 46.w,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(17),
-                            color:  const Color(0xff53B175),
-                          ),
-                          child: Center(
-                            child:  const Icon(Icons.add, color: Colors.white), 
-                          ),
-                        ),
-                      ],
-                    ).padOnly(bottom: 8.h);
-                  },
-                ),
-              ],
-            ).padOnly(left: 8.w, right: 8.w),
+                ],
+              ).padOnly(left: 8.w, right: 8.w,),
+            ),
           ],
         ),
       ),

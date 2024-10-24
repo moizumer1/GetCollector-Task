@@ -89,11 +89,19 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                          
-                            Image.network(
-                              product['imageUrl'] ?? 'Unknown Product', 
-                              height: 100.h,
-                              width: double.infinity,
-                              fit: BoxFit.cover,
+                            Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(18),
+                          border: Border.all(
+                            color: const Color(0xffD8DADC),
+                          ),
+                              ),
+                              child: Image.network(
+                                product['imageUrl'] ?? 'Unknown Product', 
+                                height: 110.h,
+                                width: double.infinity,
+                                fit: BoxFit.fill,
+                              ),
                             ),
                             SizedBox(height: 8.h),
                             // Product name
@@ -117,6 +125,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                             ),
                           ],
                         ).padAll(16),
+                 
                       );
                     }),
                   ),
