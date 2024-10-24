@@ -4,6 +4,7 @@
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tcg_collection_app/providers/quantity_provider.dart';
+import 'package:tcg_collection_app/providers/theme_provider.dart';
 import 'package:tcg_collection_app/screens/screens.dart';
 import '../model/category_model.dart';
 import 'package:provider/provider.dart'; 
@@ -19,30 +20,34 @@ class CategoryWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        final provider = Provider.of<CategoryProvider>(context, listen: false);
-        final quantity = provider.getQuantity(categoryModel.id);
+       onTap: () {
+      final provider = Provider.of<CategoryProvider>(context, listen: false);
+      final quantity = provider.getQuantity(categoryModel.id);
 
-          showModalBottomSheet(
-            // backgroundColor: Colors.white,
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            elevation: 0.0,
-            context: context,
-            isScrollControlled: true,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(20),
-              ),
+      showModalBottomSheet(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        elevation: 0.0,
+        context: context,
+        isScrollControlled: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(20),
+          ),
+        ),
+        builder: (context) {
+          return ChangeNotifierProvider.value(
+            value: provider,
+            child: Consumer<ThemeProvider>(
+              builder: (context, themeProvider, child) {
+                final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
+
+                return _buildBottomSheetContent(context, isDarkMode);
+              },
             ),
-            builder: (context) {
-              return ChangeNotifierProvider.value(
-                value: provider,
-                child: _buildBottomSheetContent(context),
-              );
-            },
           );
-        
-      },
+        },
+      );
+    },
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -127,101 +132,102 @@ class CategoryWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildBottomSheetContent(BuildContext context) {
-    return Consumer<CategoryProvider>( 
-      builder: (context, provider, child) {
-        final quantity = provider.getQuantity(categoryModel.id);
+ Widget _buildBottomSheetContent(BuildContext context, bool isDarkMode) {
+  return Consumer<CategoryProvider>(
+    builder: (context, provider, child) {
+      final quantity = provider.getQuantity(categoryModel.id);
+      final textColor = isDarkMode ? Colors.white : Colors.black;
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Align(
-              alignment: Alignment.topRight,
-              child: IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Align(
+            alignment: Alignment.topRight,
+            child: IconButton(
+              icon: const Icon(Icons.close),
+              onPressed: () {
+                Navigator.pop(context);
+              },
             ),
-            SizedBox(height: 16.h),
-            Center(
-              child: Image.network(
-                categoryModel.image,
-                height: 150.h,
-                width: 150.w,
-              ),
+          ),
+          SizedBox(height: 16.h),
+          Center(
+            child: Image.network(
+              categoryModel.image,
+              height: 150.h,
+              width: 150.w,
             ),
-            Text(
-              categoryModel.catName,
-              style: GoogleFonts.montserrat(
-                fontSize: 20.sp,
-                fontWeight: FontWeight.bold,
-                color:  Color.fromARGB(255, 124, 124, 124)
-                
-              ),
+          ),
+          Text(
+            categoryModel.catName,
+            style: GoogleFonts.montserrat(
+              fontSize: 20.sp,
+              fontWeight: FontWeight.bold,
+              color: textColor,
             ),
-            Text(
-              categoryModel.catDescription,
-              style: GoogleFonts.montserrat(
-                fontSize: 14.sp,
-                color: Color.fromARGB(255, 124, 124, 124)
-              ),
+          ),
+          Text(
+            categoryModel.catDescription,
+            style: GoogleFonts.montserrat(
+              fontSize: 14.sp,
+              color: textColor,
             ),
-            SizedBox(height: 8.h),
-            Text(
-              "Product Detail",
-              style: GoogleFonts.montserrat(
-                fontSize: 12.sp,
-                fontWeight: FontWeight.w600,
-                color:  Color.fromARGB(255, 124, 124, 124)
-              ),
+          ),
+          SizedBox(height: 8.h),
+          Text(
+            "Product Detail",
+            style: GoogleFonts.montserrat(
+              fontSize: 12.sp,
+              fontWeight: FontWeight.w600,
+              color: textColor,
             ),
-            SizedBox(height: 8.h),
-            Text(
-              'Apples are nutritious. Apples may be good for weight loss. Apples may be good for your heart. As part of a healthy and varied diet.',
-              softWrap: true,
-              style: GoogleFonts.montserrat(
-                color: Color.fromARGB(255, 124, 124, 124)
-              ),
+          ),
+          SizedBox(height: 8.h),
+          Text(
+            'Apples are nutritious. Apples may be good for weight loss. Apples may be good for your heart. As part of a healthy and varied diet.',
+            softWrap: true,
+            style: GoogleFonts.montserrat(
+              color: textColor,
             ),
-            SizedBox(height: 8.h),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.remove),
-                  onPressed: () => provider.decrement(categoryModel.id), 
-                  color: Colors.grey,
-                ),
-                SizedBox(width: 8.w),
-                Container(
-                  width: 37.w,
-                  height: 37.h,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(
-                      color: const Color(0xffE2E2E2),
-                    ),
-                  ),
-                  child: Center(
-                    child: Text('$quantity',style: TextStyle(color:  const Color.fromARGB(255, 124, 124, 124)),),
+          ),
+          SizedBox(height: 8.h),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.remove),
+                onPressed: () => provider.decrement(categoryModel.id),
+                color: Colors.grey,
+              ),
+              SizedBox(width: 8.w),
+              Container(
+                width: 37.w,
+                height: 37.h,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: const Color(0xffE2E2E2),
                   ),
                 ),
-                SizedBox(width: 8.w),
-                IconButton(
-                  icon: const Icon(Icons.add),
-                  onPressed: () => provider.increment(categoryModel.id),
-                  color: Colors.green,
+                child: Center(
+                  child: Text(
+                    '$quantity',
+                    style: TextStyle(color: textColor),
+                  ),
                 ),
-              ],
-            ),
-            SizedBox(height: 32.h),
-          ],
-        ).padOnly(left: 16.w, right: 16.w);
-      },
-    );
-  }
-
-}
+              ),
+              SizedBox(width: 8.w),
+              IconButton(
+                icon: const Icon(Icons.add),
+                onPressed: () => provider.increment(categoryModel.id),
+                color: Colors.green,
+              ),
+            ],
+          ),
+          SizedBox(height: 32.h),
+        ],
+      ).padOnly(left: 16.w, right: 16.w);
+    },
+  );
+}}
